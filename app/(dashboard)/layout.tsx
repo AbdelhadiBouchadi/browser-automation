@@ -23,10 +23,6 @@ export default async function DashboardLayout({
       <SidebarProvider className="h-svh" defaultOpen={defaultOpen}>
         <AppSidebar />
         <SidebarInset className="min-h-0 overflow-hidden border shadow-none!">
-          {/* The sidebar's own trigger is offcanvas on mobile, so surface one here. */}
-          <header className="flex h-12 shrink-0 items-center px-2 md:hidden">
-            <SidebarTrigger />
-          </header>
           {children}
         </SidebarInset>
       </SidebarProvider>
