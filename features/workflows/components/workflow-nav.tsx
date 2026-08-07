@@ -1,6 +1,8 @@
 "use client"
 
 import { useTransition } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Plus, Workflow as WorkflowIcon } from "lucide-react"
 
 import type { Workflow } from "@/lib/db/schema"
@@ -33,20 +35,29 @@ export function WorkflowNav({
 }) {
   const { state, isMobile } = useSidebar()
   const [isCreating, startCreating] = useTransition()
+  const pathname = usePathname()
 
   const createWorkflow = () => {
     startCreating(() => onCreateWorkflow(generateSlug()))
   }
 
+  // Rendered in both the expanded group and the collapsed popover, so the
+  // active highlight only has to be wired up once.
   const workflowList = (
     <SidebarMenu className="gap-y-0.5">
-      {workflows.map((workflow) => (
-        <SidebarMenuItem key={workflow.id}>
-          <SidebarMenuButton>
-            <span>{workflow.name}</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+      {workflows.map((workflow) => {
+        const href = `/workflows/${workflow.id}` as const
+
+        return (
+          <SidebarMenuItem key={workflow.id}>
+            <SidebarMenuButton asChild isActive={pathname === href}>
+              <Link href={href}>
+                <span>{workflow.name}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )
+      })}
     </SidebarMenu>
   )
 
