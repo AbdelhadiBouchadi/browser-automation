@@ -3,6 +3,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
+import { Canvas } from "./canvas"
 import { RightSidebar } from "./right-sidebar"
 
 // Every size here is a rem string: the editor's panels have intrinsic minimum
@@ -14,7 +15,7 @@ export function WorkflowShell({ workflowId }: { workflowId: string }) {
       <ResizablePanel minSize="30rem">
         <ResizablePanelGroup orientation="vertical">
           <ResizablePanel minSize="18rem">
-            <div className="p-4 text-sm text-muted-foreground">Canvas</div>
+            <Canvas />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="8rem" minSize="6rem">
