@@ -1,27 +1,24 @@
 "use client"
 
-import { useCallback } from "react"
+import { useLiveblocksFlow, Cursors } from "@liveblocks/react-flow"
 import {
-  addEdge,
   Background,
   ConnectionLineType,
   Controls,
   MiniMap,
   ReactFlow,
-  useEdgesState,
-  useNodesState,
   type ColorMode,
-  type Connection,
   type Edge,
   type NodeTypes,
 } from "@xyflow/react"
+import { StepNode } from "./step-node"
+import type { StepNodeType } from "../nodes/node-registry"
 import { useTheme } from "next-themes"
-
 import { useMounted } from "@/hooks/use-mounted"
 
 import "@xyflow/react/dist/style.css"
-import { StepNode } from "./step-node"
-import type { StepNodeType } from "../nodes/node-registry"
+import "@liveblocks/react-ui/styles.css"
+import "@liveblocks/react-flow/styles.css"
 
 const nodeTypes: NodeTypes = {
   step: StepNode,
@@ -55,14 +52,15 @@ const initialEdges: Edge[] = []
 export function Canvas() {
   const { resolvedTheme } = useTheme()
   const mounted = useMounted()
-  // The setter stays elided until there is a way to add nodes to the canvas.
-  const [nodes, , onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-
-  const onConnect = useCallback(
-    (connection: Connection) => setEdges((edges) => addEdge(connection, edges)),
-    [setEdges]
-  )
+  // The graph lives in Liveblocks Storage: `initial` seeds the room the first
+  // time it is opened, and every later session reads what is stored. `suspense`
+  // is safe because `Room` already wraps this in a `ClientSideSuspense`.
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } =
+    useLiveblocksFlow<StepNodeType, Edge>({
+      suspense: true,
+      nodes: { initial: initialNodes },
+      edges: { initial: initialEdges },
+    })
 
   // next-themes reads the stored theme on the client, so the server has no
   // value to match: rendering it before mount would hydrate a `dark` canvas
@@ -80,6 +78,7 @@ export function Canvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onDelete={onDelete}
         colorMode={colorMode}
         fitView
         connectionLineType={ConnectionLineType.SmoothStep}
@@ -99,6 +98,7 @@ export function Canvas() {
         <Background />
         <MiniMap pannable zoomable />
         <Controls />
+        <Cursors />
       </ReactFlow>
     </div>
   )

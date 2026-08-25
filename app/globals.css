@@ -135,3 +135,14 @@
     cursor: pointer !important;
   }
 }
+
+/* Target the internal Liveblocks badge container element */
+div[class*="lb-badge"],
+iframe[src*="liveblocks"],
+a[href*="https://lblcks.io/badge"],
+div[class*="react-flow__panel react-flow__attribution bottom right"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

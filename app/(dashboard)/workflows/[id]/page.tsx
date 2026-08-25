@@ -1,3 +1,4 @@
+import { Room } from "@/features/workflows/components/room"
 import { WorkflowShell } from "@/features/workflows/components/workflow-shell"
 
 // `PageProps` is generated from the route tree, so the literal below is what
@@ -9,5 +10,9 @@ export default async function WorkflowPage({
 }) {
   const { id } = await params
 
-  return <WorkflowShell workflowId={id} />
+  return (
+    <Room roomId={id}>
+      <WorkflowShell workflowId={id} />
+    </Room>
+  )
 }
