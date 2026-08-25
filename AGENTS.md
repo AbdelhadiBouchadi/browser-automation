@@ -14,6 +14,18 @@ columns, narrow with `Pick<Row, ...>` / `Omit<Row, ...>` rather than redeclaring
 literal type. Don't add an insert type where `db.insert(...).values()` already
 enforces the shape.
 
+# React Flow
+
+The canvas is built on React Flow (`@xyflow/react`, v12). Do not write React Flow
+code from memory — the v11 → v12 rename moved the package, the CSS path, and
+several hook and prop names. Before adding or changing any React Flow component,
+hook, prop, or type, fetch <https://reactflow.dev/llms.txt> and follow the page it
+points at for the API in question.
+
+One correction that index gets wrong: it still names the v11 package `reactflow`
+with `reactflow/dist/style.css`. This project is on v12 — import from
+`@xyflow/react` and `@xyflow/react/dist/style.css`.
+
 <!-- TRIGGER.DEV SKILLS START -->
 ## Trigger.dev agent skills
 

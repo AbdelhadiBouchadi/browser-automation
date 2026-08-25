@@ -1,68 +1,67 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 import {
   addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
   Background,
+  ConnectionLineType,
   Controls,
   MiniMap,
   ReactFlow,
-  ConnectionLineType,
+  useEdgesState,
+  useNodesState,
+  type ColorMode,
   type Connection,
   type Edge,
-  type EdgeChange,
-  type ColorMode,
-  type Node,
-  type NodeChange,
+  type NodeTypes,
 } from "@xyflow/react"
 import { useTheme } from "next-themes"
 
 import { useMounted } from "@/hooks/use-mounted"
 
 import "@xyflow/react/dist/style.css"
+import { StepNode } from "./step-node"
+import type { StepNodeType } from "../nodes/node-registry"
 
-const initialNodes: Node[] = [
+const nodeTypes: NodeTypes = {
+  step: StepNode,
+}
+
+const initialNodes: StepNodeType[] = [
   {
     id: "n1",
-    type: "input",
+    type: "step",
     position: { x: 0, y: 0 },
-    data: { label: "Start" },
+    data: { type: "start", kind: "trigger", title: "Start", values: {} },
   },
-  { id: "n2", position: { x: 0, y: 120 }, data: { label: "Step" } },
   {
-    id: "n3",
-    type: "output",
-    position: { x: 0, y: 240 },
-    data: { label: "End" },
+    id: "n2",
+    type: "step",
+    // StepNode puts its handles on the left and right edges, so the flow reads
+    // left to right; 320px clears the node's 200px minimum width.
+    position: { x: 320, y: 0 },
+    data: {
+      type: "open-url",
+      kind: "action",
+      title: "Open URL",
+      // Empty so the field renders its placeholder once the inspector edits it.
+      values: {},
+    },
   },
 ]
 
-const initialEdges: Edge[] = [
-  { id: "n1-n2", source: "n1", target: "n2" },
-  { id: "n2-n3", source: "n2", target: "n3" },
-]
+const initialEdges: Edge[] = []
 
 export function Canvas() {
   const { resolvedTheme } = useTheme()
   const mounted = useMounted()
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  // The setter stays elided until there is a way to add nodes to the canvas.
+  const [nodes, , onNodesChange] = useNodesState(initialNodes)
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nodes) => applyNodeChanges(changes, nodes)),
-    []
-  )
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((edges) => applyEdgeChanges(changes, edges)),
-    []
-  )
   const onConnect = useCallback(
     (connection: Connection) => setEdges((edges) => addEdge(connection, edges)),
-    []
+    [setEdges]
   )
 
   // next-themes reads the stored theme on the client, so the server has no
@@ -75,6 +74,7 @@ export function Canvas() {
   return (
     <div className="size-full">
       <ReactFlow
+        nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
