@@ -16,10 +16,9 @@ export function Room({
   roomId: string
 }) {
   return (
-    <LiveblocksProvider
-      throttle={16}
-      publicApiKey={process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!}
-    >
+    // ID tokens: the endpoint identifies the caller and the org they belong to,
+    // and each room's stored permissions decide what that identity can open.
+    <LiveblocksProvider throttle={16} authEndpoint="/api/liveblocks/auth">
       <RoomProvider id={roomId}>
         <ClientSideSuspense
           fallback={
