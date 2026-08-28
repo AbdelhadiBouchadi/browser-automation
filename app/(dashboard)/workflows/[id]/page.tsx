@@ -26,6 +26,7 @@ export default async function WorkflowPage({
   // existed — but note it only applies to rooms it creates, so a room that is
   // already there keeps whatever accesses it was created with.
   await liveblocks.getOrCreateRoom(id, {
+    organizationId: orgId,
     defaultAccesses: [],
     groupsAccesses: { [orgId]: ["room:write"] },
     metadata: { title: workflow.name, workflowId: id },

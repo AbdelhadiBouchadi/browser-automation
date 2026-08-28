@@ -29,9 +29,8 @@ export async function POST() {
   const { status, body } = await liveblocks.identifyUser(
     {
       userId,
-      // The Clerk organization is the group: a room that grants access to this
-      // id is joinable by every member of the org, and by no one outside it.
       groupIds: [orgId],
+      organizationId: orgId,
     },
     {
       // Shape comes from `Liveblocks["UserMeta"]["info"]` in liveblocks.config.ts;
